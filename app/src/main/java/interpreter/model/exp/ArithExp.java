@@ -12,7 +12,7 @@ public record ArithExp(ArithOp op, IExp left, IExp right) implements IExp {
         IValue v1 = left.eval(symTable);
         if (!(v1 instanceof IntValue))
             throw new ExpressionException("first operand is not an integer");
-        int n1 = ((IntValue) v1).val();   // cast, then call the record accessor
+        int n1 = ((IntValue) v1).val();
 
         IValue v2 = right.eval(symTable);
         if (!(v2 instanceof IntValue))
