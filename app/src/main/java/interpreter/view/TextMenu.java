@@ -58,7 +58,7 @@ public class TextMenu {
             return;
         }
 
-        PrgState state = new PrgState(new MyStack<>(), new MyDictionary<>(), new MyList<>(), selected);
+        PrgState state = PrgState.of(selected);
         try {
             new Controller(new Repository(state), true).allStep();
         } catch (MyException e) {

@@ -4,6 +4,8 @@ import interpreter.exceptions.ADTException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MyListTest {
@@ -37,5 +39,23 @@ class MyListTest {
     @Test
     void getWithNegativeIndexThrows() {
         assertThrows(ADTException.class, () -> list.get(-1));
+    }
+
+    @Test
+    void toListIsInInsertionOrder() {
+        list.add(10);
+        list.add(20);
+        list.add(30);
+        assertEquals(List.of(10, 20, 30), list.toList());
+    }
+
+    @Test
+    void toListOfEmptyListIsEmpty() {
+        assertEquals(List.of(), list.toList());
+    }
+
+    @Test
+    void toListIsReadOnly() {
+        assertThrows(UnsupportedOperationException.class, () -> list.toList().add(1));
     }
 }
