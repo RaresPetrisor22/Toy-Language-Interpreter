@@ -60,7 +60,7 @@ public class TextMenu {
 
         PrgState state = PrgState.of(selected);
         try {
-            new Controller(new Repository(state), true).allStep();
+            new Controller(new Repository(state, "log.txt"), true).allStep();
         } catch (MyException e) {
             System.out.println("Error: " + e.getMessage());
         }
