@@ -54,6 +54,40 @@ class ControllerTest {
     }
 
     @Test
+    void fileExampleReadsBothNumbersAndClosesTheFile() throws Exception {
+        Path in = tmp.resolve("test.in");
+        Files.writeString(in, "15\n50\n");
+        PrgState state = run(Examples.fileExample(in.toString()));
+        assertEquals(List.of(new IntValue(15), new IntValue(50)), state.getOut().toList());
+        assertTrue(state.getFileTable().toMap().isEmpty());
+    }
+
+    @Test
+    void fileExampleWithEmptyFilePrintsZeros() throws Exception {
+        Path in = tmp.resolve("test.in");
+        Files.writeString(in, "");
+        PrgState state = run(Examples.fileExample(in.toString()));
+        assertEquals(List.of(new IntValue(0), new IntValue(0)), state.getOut().toList());
+        assertTrue(state.getFileTable().toMap().isEmpty());
+    }
+
+    @Test
+    void logFileContainsTheFourSectionsInOrder() throws Exception {
+        run(Examples.EX1);
+        String log = Files.readString(log());
+        int a = log.indexOf("ExeStack:"), b = log.indexOf("SymTable:"),
+                c = log.indexOf("Out:"), d = log.indexOf("FileTable:");
+        assertTrue(0 <= a && a < b && b < c && c < d);
+    }
+
+    @Test
+    void example5PrintsFive() throws MyException {
+        PrgState state = run(Examples.EX5);
+        assertTrue(state.getExeStack().isEmpty());
+        assertEquals(List.of(new IntValue(5)), state.getOut().toList());
+    }
+
+    @Test
     void oneStepOnEmptyStackThrows() throws MyException {
         PrgState state = PrgState.of(new NopStmt());
         Controller controller = new Controller(new Repository(state, log().toString()), false);

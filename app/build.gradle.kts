@@ -36,6 +36,7 @@ application {
 
 tasks.named<JavaExec>("run") {
     standardInput = System.`in` // keyboard input for the text menu
+    workingDir = rootDir        // test.in and the log files in the project root
 }
 
 tasks.named<Test>("test") {
