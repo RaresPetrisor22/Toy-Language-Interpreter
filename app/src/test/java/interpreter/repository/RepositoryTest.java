@@ -6,7 +6,9 @@ import interpreter.model.PrgState;
 import interpreter.model.exp.VarExp;
 import interpreter.model.stmt.NopStmt;
 import interpreter.model.stmt.PrintStmt;
+import interpreter.model.type.IntType;
 import interpreter.model.value.IntValue;
+import interpreter.model.value.RefValue;
 import interpreter.model.value.StringValue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -32,11 +34,13 @@ class RepositoryTest {
     }
 
     @Test
-    void logContainsTheFourSections() throws MyException, IOException {
+    void logContainsTheFiveSections() throws MyException, IOException {
         PrgState state = PrgState.of(new PrintStmt(new VarExp("a")));
         state.getSymTable().put("a", new IntValue(5));
         state.getOut().add(new IntValue(7));
         state.getFileTable().put(new StringValue("test.in"), new BufferedReader(new StringReader("")));
+        state.getHeap().allocate(new IntValue(20));
+        state.getHeap().allocate(new RefValue(1, new IntType()));
         Path log = tmp.resolve("log.txt");
 
         new Repository(state, log.toString()).logPrgStateExec();
@@ -46,6 +50,7 @@ class RepositoryTest {
                 "SymTable:", "a --> 5",
                 "Out:", "7",
                 "FileTable:", "test.in",
+                "Heap:", "1 --> 20", "2 --> (1, int)",
                 ""), Files.readAllLines(log));
     }
 
