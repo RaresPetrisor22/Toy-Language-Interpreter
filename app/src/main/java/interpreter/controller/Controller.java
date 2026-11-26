@@ -7,6 +7,9 @@ import interpreter.model.adt.IStack;
 import interpreter.model.stmt.IStmt;
 import interpreter.repository.IRepository;
 
+import static interpreter.controller.GarbageCollector.getAddrFromSymTable;
+import static interpreter.controller.GarbageCollector.safeGarbageCollector;
+
 public class Controller {
     private final IRepository repo;
     private final boolean displayFlag;
@@ -29,9 +32,17 @@ public class Controller {
         display(prg);
         while (!prg.getExeStack().isEmpty()) {
             oneStep(prg);
-            repo.logPrgStateExec();
+            repo.logPrgStateExec();                 // before the collection
+            collectGarbage(prg);
+            repo.logPrgStateExec();                 // after the collection
             display(prg);
         }
+    }
+
+    private void collectGarbage(PrgState prg) {
+        prg.getHeap().setContent(safeGarbageCollector(
+                getAddrFromSymTable(prg.getSymTable().toMap().values()),
+                prg.getHeap().getContent()));
     }
 
     private void display(PrgState prg) {

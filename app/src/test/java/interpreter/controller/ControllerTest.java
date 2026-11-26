@@ -97,10 +97,10 @@ class ControllerTest {
     }
 
     @Test
-    void allStepLogsInitialStateAndEveryStep() throws MyException, IOException {
-        run(Examples.EX1);
+    void allStepLogsInitialStateAndEveryStepBeforeAndAfterCollection() throws MyException, IOException {
+        run(Examples.EX1);                          // 5 steps
         String content = Files.readString(log());
-        assertEquals(6, content.split("ExeStack:", -1).length - 1);
+        assertEquals(1 + 2 * 5, content.split("ExeStack:", -1).length - 1);
 
         List<String> lines = Files.readAllLines(log());
         int lastExeStack = lines.lastIndexOf("ExeStack:");
