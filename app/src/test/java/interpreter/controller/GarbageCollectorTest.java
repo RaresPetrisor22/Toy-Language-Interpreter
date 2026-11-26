@@ -2,9 +2,7 @@ package interpreter.controller;
 
 import interpreter.exceptions.MyException;
 import interpreter.model.PrgState;
-import interpreter.model.exp.ReadHeapExp;
 import interpreter.model.exp.ValueExp;
-import interpreter.model.exp.VarExp;
 import interpreter.model.stmt.*;
 import interpreter.model.type.IntType;
 import interpreter.model.type.RefType;
@@ -13,6 +11,7 @@ import interpreter.model.value.IValue;
 import interpreter.model.value.IntValue;
 import interpreter.model.value.RefValue;
 import interpreter.repository.Repository;
+import interpreter.view.Examples;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -93,14 +92,7 @@ class GarbageCollectorTest {
 
     @Test
     void ex9PrintsTwentyWithTheSafeCollector() throws MyException {
-        // Ref int v; new(v, 20); Ref Ref int a; new(a, v); new(v, 30); print(rH(rH(a)))
-        IStmt ex9 = new CompStmt(new VarDeclStmt("v", new RefType(INT)),
-                new CompStmt(new NewStmt("v", new ValueExp(new IntValue(20))),
-                new CompStmt(new VarDeclStmt("a", new RefType(new RefType(INT))),
-                new CompStmt(new NewStmt("a", new VarExp("v")),
-                new CompStmt(new NewStmt("v", new ValueExp(new IntValue(30))),
-                        new PrintStmt(new ReadHeapExp(new ReadHeapExp(new VarExp("a")))))))));
-        PrgState state = PrgState.of(ex9);
+        PrgState state = PrgState.of(Examples.EX9);
         new Controller(new Repository(state, tmp.resolve("log.txt").toString()), false).allStep();
         assertEquals(List.of(new IntValue(20)), state.getOut().toList());
     }

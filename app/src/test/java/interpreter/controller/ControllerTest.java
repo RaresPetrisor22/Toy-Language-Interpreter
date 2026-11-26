@@ -5,7 +5,10 @@ import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
 import interpreter.model.stmt.IStmt;
 import interpreter.model.stmt.NopStmt;
+import interpreter.model.type.IntType;
+import interpreter.model.type.RefType;
 import interpreter.model.value.IntValue;
+import interpreter.model.value.RefValue;
 import interpreter.repository.Repository;
 import interpreter.view.Examples;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,6 +89,51 @@ class ControllerTest {
         PrgState state = run(Examples.EX5);
         assertTrue(state.getExeStack().isEmpty());
         assertEquals(List.of(new IntValue(5)), state.getOut().toList());
+    }
+
+    // ----- A4 examples: the results of section 1.4 -----
+
+    private static final IntType INT = new IntType();
+
+    @Test
+    void example6PrintsTheReferences() throws MyException {
+        PrgState state = run(Examples.EX6);
+        assertTrue(state.getExeStack().isEmpty());
+        assertEquals(Map.of(1, new IntValue(20), 2, new RefValue(1, INT)), state.getHeap().getContent());
+        assertEquals(Map.of("v", new RefValue(1, INT), "a", new RefValue(2, new RefType(INT))),
+                state.getSymTable().toMap());
+        assertEquals(List.of(new RefValue(1, INT), new RefValue(2, new RefType(INT))), state.getOut().toList());
+    }
+
+    @Test
+    void example7ReadsThroughTheHeap() throws MyException {
+        PrgState state = run(Examples.EX7);
+        assertEquals(Map.of(1, new IntValue(20), 2, new RefValue(1, INT)), state.getHeap().getContent());
+        assertEquals(Map.of("v", new RefValue(1, INT), "a", new RefValue(2, new RefType(INT))),
+                state.getSymTable().toMap());
+        assertEquals(List.of(new IntValue(20), new IntValue(25)), state.getOut().toList());
+    }
+
+    @Test
+    void example8WritesTheHeap() throws MyException {
+        PrgState state = run(Examples.EX8);
+        assertEquals(Map.of(1, new IntValue(30)), state.getHeap().getContent());
+        assertEquals(Map.of("v", new RefValue(1, INT)), state.getSymTable().toMap());
+        assertEquals(List.of(new IntValue(20), new IntValue(35)), state.getOut().toList());
+    }
+
+    @Test
+    void example9PrintsTwentyWithTheSafeCollector() throws MyException {
+        PrgState state = run(Examples.EX9);
+        assertEquals(List.of(new IntValue(20)), state.getOut().toList());
+    }
+
+    @Test
+    void example10CountsDownWithWhile() throws MyException {
+        PrgState state = run(Examples.EX10);
+        assertTrue(state.getExeStack().isEmpty());
+        assertEquals(List.of(new IntValue(4), new IntValue(3), new IntValue(2), new IntValue(1), new IntValue(0)),
+                state.getOut().toList());
     }
 
     @Test
