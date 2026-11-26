@@ -5,9 +5,11 @@ import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
 import interpreter.model.type.BoolType;
 import interpreter.model.type.IntType;
+import interpreter.model.type.RefType;
 import interpreter.model.type.StringType;
 import interpreter.model.value.BoolValue;
 import interpreter.model.value.IntValue;
+import interpreter.model.value.RefValue;
 import interpreter.model.value.StringValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,12 @@ class VarDeclStmtTest {
     void stringVariableGetsDefaultEmptyString() throws MyException {
         new VarDeclStmt("s", new StringType()).execute(state);
         assertEquals(new StringValue(""), state.getSymTable().lookup("s"));
+    }
+
+    @Test
+    void refVariableGetsDefaultNullReference() throws MyException {
+        new VarDeclStmt("x", new RefType(new RefType(new IntType()))).execute(state);
+        assertEquals(new RefValue(0, new RefType(new IntType())), state.getSymTable().lookup("x"));
     }
 
     @Test
